@@ -1,17 +1,19 @@
 from tkinter import *
 import os 
+import pandas
+import random
+from start_page import *
+
+BACKGROUND_COLOR ='#1e6631'
 
 root = Tk()
-root.title("Tic Tac Toe game")
-root.config(padx=50, pady=50)
+root.title("Blackjack game")
+root.config(padx=50, pady=50, bg = BACKGROUND_COLOR)
 
 canvas = Canvas(width = 300, height = 300)
+canvas.config(bg = BACKGROUND_COLOR, highlightthickness=0)
 canvas.pack()
 
-wd = os.getcwd()
-print(wd)
+startPage = startPage(root, canvas)
 
-with open(wd + '/Blackjack_project/cards.csv', 'r') as csv_line:
-    card_data = csv_line.readlines()
-
-print(card_data)
+root.mainloop()
