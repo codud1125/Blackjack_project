@@ -38,45 +38,55 @@ class startPage:
         right_image = PhotoImage(file= self.wd + '/images/right.png')
         button_right = Button(canvas,image=right_image, borderwidth = 0, highlightthickness=0, command=lambda: self.withdraw_card(root, canvas))
         button_right.image = right_image
-        button_right.place(x=800,y=300)
+        button_right.place(x=760,y=180)
 
         wrong_image = PhotoImage(file= self.wd + '/images/wrong.png')
         button_wrong = Button(canvas, image=wrong_image, borderwidth = 0, highlightthickness=0, command=lambda: self.stop_card(root, canvas))
         button_wrong.image = wrong_image
-        button_wrong.place(x=900,y=300)
+        button_wrong.place(x=860,y=180)
 
         self.starting_card(root, canvas)
 
     def starting_card(self, root, canvas):
+
+        self.dealer_score_label = Label(canvas,text='Dealer: ?', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 30))
+        self.dealer_score_label.place(x=780,y=80)
+
+        self.mine_score_label = Label(canvas,text=f'Chunbae: {self.mine_score}', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 30))
+        self.mine_score_label.place(x=720,y=340)
+
         for i in range(0, 2):
-            self.opponent(root, canvas, self.opponent_turn)
+            self.opponent(root, canvas, self.opponent_turn, "no")
 
         for i in range(0, 2):
             self.mine(root, canvas, self.mine_turn)
-        
-        # Buttons
-        dealer_score_label = Label(canvas,text='Dealer: ?', bg = self.BACKGROUND_COLOR, font = 'Helvetica 14')
-        dealer_score_label.place(x=800,y=150)
-
-        mine_score_label = Label(canvas,text=f'Chunbae: {self.mine_score}', bg = self.BACKGROUND_COLOR, font = 'Helvetica 14')
-        mine_score_label.place(x=900,y=150)
 
     def withdraw_card(self, root, canvas):
         self.mine(root, canvas, self.mine_turn)
+
+        if isinstance(self.mine_score, list):
+            if len(self.mine_score) > 1:
+                self.mine_score = max(self.mine_score)
+            else: self.mine_score = self.mine_score[0]
 
         if self.mine_score > 21:
             self.losing_label(root, canvas)
             return
 
-        self.opponent(root, canvas, self.opponent_turn)
-
-        dealer_score_label = Label(canvas,text='Dealer: ?', bg = self.BACKGROUND_COLOR, font = 'Helvetica 14')
-        dealer_score_label.place(x=800,y=150)
-
-        mine_score_label = Label(canvas,text=f'Chunbae: {self.mine_score}', bg = self.BACKGROUND_COLOR, font = 'Helvetica 14')
-        mine_score_label.place(x=900,y=150)
-
     def stop_card(self, root, canvas):
+
+        self.dealer_score_label.configure(text=f'Dealer: {self.opponent_score}')
+
+        if isinstance(self.mine_score, list):
+            if len(self.mine_score) > 1:
+                self.mine_score = max(self.mine_score)
+            else: self.mine_score = self.mine_score[0]
+
+        if isinstance(self.opponent_score, list):
+            if len(self.opponent_score) > 1:
+                self.opponent_score = max(self.opponent_score)
+            else: self.opponent_score = self.opponent_score[0]
+
         self.opponent_1 = Image.open(self.wd + f'/images/{self.opponent_1["value"]}_of_{self.opponent_1["suit"]}.png')
         self.opponent_1 = self.opponent_1.resize((120, 200), Image.ANTIALIAS)
         self.opponent_1 = ImageTk.PhotoImage(self.opponent_1)
@@ -85,29 +95,27 @@ class startPage:
         self.opponent_1_label.image = self.opponent_1
         self.opponent_1_label.place(x=0, y=0)
 
-        dealer_score_label = Label(canvas,text=f'Dealer: {self.opponent_score}', bg = self.BACKGROUND_COLOR, font = 'Helvetica 14')
-        dealer_score_label.place(x=800,y=150)
-
         if self.opponent_score > 21:
             self.winning_label(root, canvas)
             return
-
         elif self.opponent_score > 17 and self.opponent_score > self.mine_score:
             self.losing_label(root, canvas)
             return
 
-        while (self.opponent_score <= 17):
-            self.opponent(root, canvas, self.opponent_turn)
-            
-            dealer_score_label = Label(canvas,text=f'Dealer: {self.opponent_score}', bg = self.BACKGROUND_COLOR, font = 'Helvetica 14')
-            dealer_score_label.place(x=800,y=150)
+        while (self.opponent_score < 17):
+            self.opponent(root, canvas, self.opponent_turn, "yes")
 
         if self.opponent_score <= 21 and self.opponent_score > self.mine_score:
             self.losing_label(root, canvas)
             return
-
         elif self.opponent_score > 21:
             self.winning_label(root, canvas)
+            return
+        elif self.opponent_score < self.mine_score:
+            self.winning_label(root, canvas)
+            return
+        elif self.opponent_score == self.mine_score:
+            # need to configure tie gui
             return
 
     def mine(self, root, canvas, mine_turn):
@@ -124,12 +132,11 @@ class startPage:
         self.mine_card_label.place(x=self.mine_x, y=self.mine_y)
         self.mine_x += 130
 
-        self.mine_score = self.score_update(self.mine_card["value"], self.mine_score)
-        # print("mine_score", self.mine_score)
+        self.mine_score = self.score_update(self.mine_card["value"], self.mine_score, "mine", "yes")
 
         self.mine_turn += 1
 
-    def opponent(self, root, canvas, opponent_turn):
+    def opponent(self, root, canvas, opponent_turn, yes_or_no):
         self.opponent_card = random.choice(self.data)
         self.data.remove(self.opponent_card)
 
@@ -148,21 +155,53 @@ class startPage:
         self.opponent_card_label.place(x=self.opponent_x, y=self.opponent_y)
         self.opponent_x += 130
 
-        self.opponent_score = self.score_update(self.opponent_card["value"], self.opponent_score)
-        # print("opponent_score", self.opponent_score)
+        self.opponent_score = self.score_update(self.opponent_card["value"], self.opponent_score, "opponent", yes_or_no)
 
         self.opponent_turn += 1
 
-    def score_update(self, score, total_score):
+    def score_update(self, score, total_score, who, yes_or_no):
         if score in ('jack', 'queen', 'king'):
             score = 10
+            if isinstance(total_score, list):
+                if len(total_score) > 1:
+                    total_score = [x+score for x in total_score]
+                    final_score_list = []
+                    for entry in total_score_list:
+                        if entry <= 21:
+                            final_score_list.append(entry)
+                    total_score = final_score_list
+            else:
+                total_score = total_score + score
         elif score == 'ace':
-            score = 1
+            total_score_list = [total_score+1, total_score+11]
+            final_score_list = []
+            for entry in total_score_list:
+                if entry <= 21:
+                    final_score_list.append(entry)
+            total_score = final_score_list
         else:
             score = int(score)
+            if isinstance(total_score, list):
+                if len(total_score) > 1:
+                    total_score = [x+score for x in total_score]
+                    final_score_list = []
+                    for entry in total_score_list:
+                        if entry <= 21:
+                            final_score_list.append(entry)
+                    total_score = final_score_list
+            else:
+                total_score = total_score + score
 
-        total_score = total_score + score
-        # print("total_score", total_score)
+        if who == 'opponent' and yes_or_no=='yes':
+            self.opponent_score = total_score
+            self.dealer_score_label.configure(text=f'Dealer: {self.opponent_score}')
+        elif who == 'opponent' and yes_or_no=='no':
+            self.opponent_score = total_score
+            self.dealer_score_label.configure(text=f'Dealer: ?')
+        elif who == 'mine':
+            self.mine_score = total_score
+            self.mine_score_label.configure(text=f'Chunbae: {self.mine_score}')
+
         return(total_score)
 
     def winning_label(self, root, canvas):
