@@ -10,6 +10,9 @@ class startPage:
     wd = os.getcwd()
     BACKGROUND_COLOR ='#1e6631'
 
+    dealer_score = 0
+    mine_score = 0
+
     def __init__(self, root, canvas):
 
         for child in canvas.winfo_children():
@@ -111,5 +114,49 @@ class startPage:
 
         self.mine_2.config(image=self.mine_card_2_image)
 
+        self.score_update()
+
+        # Buttons
+        dealer_score_label = Label(canvas,text='Dealer: ?', bg = self.BACKGROUND_COLOR, font = 'Helvetica 14')
+        dealer_score_label.grid(row=1, column=5)
+
+        mine_score_label = Label(canvas,text=f'Chunbae: {self.mine_score}', bg = self.BACKGROUND_COLOR, font = 'Helvetica 14')
+        mine_score_label.grid(row=1, column=6)
+
+
     def withdraw_card(self, root, canvas):
         pass
+
+    def score_update(self):
+
+        if self.opp_card_1["value"] in ('jack', 'queen', 'king'):
+            self.opp_card_1["value"] = 10
+        elif self.opp_card_1["value"] == 'ace':
+            self.opp_card_1["value"] = [1, 10]
+        else:
+            self.opp_card_1["value"] = int(self.opp_card_1["value"])
+        
+        if self.opp_card_2["value"] in ('jack', 'queen', 'king'):
+            self.opp_card_2["value"] = 10
+        elif self.opp_card_2["value"] == 'ace':
+            self.opp_card_2["value"] = [1, 10]
+        else:
+            self.opp_card_2["value"] = int(self.opp_card_2["value"])
+        
+        if self.mine_card_1["value"] in ('jack', 'queen', 'king'):
+            self.mine_card_1["value"] = 10
+        elif self.mine_card_1["value"] == 'ace':
+            self.mine_card_1["value"] = [1, 10]
+        else:
+            self.mine_card_1["value"] = int(self.mine_card_1["value"])
+
+        
+        if self.mine_card_2["value"] in ('jack', 'queen', 'king'):
+            self.mine_card_2["value"] = 10
+        elif self.mine_card_2["value"] == 'ace':
+            self.mine_card_2["value"] = [1, 10]
+        else:
+            self.mine_card_2["value"] = int(self.mine_card_2["value"])
+
+        self.dealer_score = self.opp_card_1["value"] + self.opp_card_2["value"]
+        self.mine_score = self.mine_card_1["value"] + self.mine_card_2["value"]
