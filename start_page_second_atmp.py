@@ -49,10 +49,10 @@ class startPage:
 
     def starting_card(self, root, canvas):
 
-        self.dealer_score_label = Label(canvas,text='Dealer: ?', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 30))
-        self.dealer_score_label.place(x=780,y=80)
+        self.dealer_score_label = Label(canvas,text='Dealer: ?', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25))
+        self.dealer_score_label.place(x=720,y=80)
 
-        self.mine_score_label = Label(canvas,text=f'Chunbae: {self.mine_score}', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 30))
+        self.mine_score_label = Label(canvas,text=f'Chunbae: {self.mine_score}', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25))
         self.mine_score_label.place(x=720,y=340)
 
         for i in range(0, 2):
@@ -61,31 +61,32 @@ class startPage:
         for i in range(0, 2):
             self.mine(root, canvas, self.mine_turn)
 
+        if isinstance(self.mine_score, list):
+            if len(self.mine_score) > 1:
+                self.mine_score_compare = max(self.mine_score)
+                if self.mine_score_compare == 21:
+                    self.winning_label(root, canvas)
+                return
+
     def withdraw_card(self, root, canvas):
         self.mine(root, canvas, self.mine_turn)
 
         if isinstance(self.mine_score, list):
             if len(self.mine_score) > 1:
-                self.mine_score = max(self.mine_score)
-            else: self.mine_score = self.mine_score[0]
-
-        if self.mine_score > 21:
+                self.mine_score_compare = max(self.mine_score)
+                if self.mine_score_compare > 21:
+                    self.losing_label(root, canvas)
+                    return
+        elif self.mine_score > 21:
             self.losing_label(root, canvas)
-            return
 
     def stop_card(self, root, canvas):
 
         self.dealer_score_label.configure(text=f'Dealer: {self.opponent_score}')
 
-        if isinstance(self.mine_score, list):
-            if len(self.mine_score) > 1:
-                self.mine_score = max(self.mine_score)
-            else: self.mine_score = self.mine_score[0]
-
         if isinstance(self.opponent_score, list):
             if len(self.opponent_score) > 1:
-                self.opponent_score = max(self.opponent_score)
-            else: self.opponent_score = self.opponent_score[0]
+                self.opponent_score_compare = max(self.opponent_score)
 
         self.opponent_1 = Image.open(self.wd + f'/images/{self.opponent_1["value"]}_of_{self.opponent_1["suit"]}.png')
         self.opponent_1 = self.opponent_1.resize((120, 200), Image.ANTIALIAS)
@@ -95,15 +96,29 @@ class startPage:
         self.opponent_1_label.image = self.opponent_1
         self.opponent_1_label.place(x=0, y=0)
 
-        if self.opponent_score > 21:
+        if self.opponent_score_compare > 21:
             self.winning_label(root, canvas)
             return
-        elif self.opponent_score > 17 and self.opponent_score > self.mine_score:
+        elif self.opponent_score_compare > 17 and self.opponent_score_compare > self.mine_score:
+            self.losing_label(root, canvas)
+            return
+        elif self.opponent_score_compare == 21:
             self.losing_label(root, canvas)
             return
 
-        while (self.opponent_score < 17):
+        while (self.opponent_score_compare < 17):
             self.opponent(root, canvas, self.opponent_turn, "yes")
+            if isinstance(self.opponent_score, list):
+                if len(self.opponent_score) > 1:
+                    self.opponent_score_compare = max(self.opponent_score)
+
+        if isinstance(self.opponent_score, list):
+            if len(self.opponent_score) > 1:
+                self.opponent_score = max(self.opponent_score)
+
+        if isinstance(self.mine_score, list):
+            if len(self.mine_score) > 1:
+                self.mine_score = max(self.mine_score)
 
         if self.opponent_score <= 21 and self.opponent_score > self.mine_score:
             self.losing_label(root, canvas)
@@ -115,7 +130,11 @@ class startPage:
             self.winning_label(root, canvas)
             return
         elif self.opponent_score == self.mine_score:
-            # need to configure tie gui
+            self.winning_label = Label(canvas, text='Tie!', font = ('Helvetica', 30), fg='red', bg='white', borderwidth = 1, relief='solid', padx= 5, pady=5)
+            self.winning_label.place(x=460, y=190)
+
+            self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 15), borderwidth = 1, highlightthickness=0, command = lambda:self.restart(root, canvas))
+            self.restart_btn.place(x=440, y=250)
             return
 
     def mine(self, root, canvas, mine_turn):
@@ -132,7 +151,7 @@ class startPage:
         self.mine_card_label.place(x=self.mine_x, y=self.mine_y)
         self.mine_x += 130
 
-        self.mine_score = self.score_update(self.mine_card["value"], self.mine_score, "mine", "yes")
+        self.score_update(self.mine_card["value"], self.mine_score, "mine", "yes")
 
         self.mine_turn += 1
 
@@ -155,7 +174,7 @@ class startPage:
         self.opponent_card_label.place(x=self.opponent_x, y=self.opponent_y)
         self.opponent_x += 130
 
-        self.opponent_score = self.score_update(self.opponent_card["value"], self.opponent_score, "opponent", yes_or_no)
+        self.score_update(self.opponent_card["value"], self.opponent_score, "opponent", yes_or_no)
 
         self.opponent_turn += 1
 
@@ -164,45 +183,58 @@ class startPage:
             score = 10
             if isinstance(total_score, list):
                 if len(total_score) > 1:
-                    total_score = [x+score for x in total_score]
+                    self.total_score_list = [x+score for x in total_score]
                     final_score_list = []
-                    for entry in total_score_list:
+                    for entry in self.total_score_list:
                         if entry <= 21:
                             final_score_list.append(entry)
                     total_score = final_score_list
+                if len(total_score) == 1:
+                    total_score = total_score[0]
             else:
                 total_score = total_score + score
         elif score == 'ace':
-            total_score_list = [total_score+1, total_score+11]
+            if isinstance(total_score, list):
+                for score in total_score:
+                    self.total_score_list.append(score+1)
+                    self.total_score_list.append(score+11)
+            else: self.total_score_list = [total_score+1, total_score+11]
             final_score_list = []
-            for entry in total_score_list:
+            for entry in self.total_score_list:
                 if entry <= 21:
                     final_score_list.append(entry)
             total_score = final_score_list
+            if isinstance(total_score, list):
+                if len(total_score) == 1:
+                    total_score = total_score[0]
         else:
             score = int(score)
             if isinstance(total_score, list):
                 if len(total_score) > 1:
-                    total_score = [x+score for x in total_score]
+                    self.total_score_list = [x+score for x in total_score]
                     final_score_list = []
-                    for entry in total_score_list:
+                    for entry in self.total_score_list:
                         if entry <= 21:
                             final_score_list.append(entry)
                     total_score = final_score_list
+                if len(total_score) == 1:
+                    total_score = total_score[0]
             else:
                 total_score = total_score + score
 
         if who == 'opponent' and yes_or_no=='yes':
             self.opponent_score = total_score
+            self.opponent_score_compare = self.opponent_score
             self.dealer_score_label.configure(text=f'Dealer: {self.opponent_score}')
         elif who == 'opponent' and yes_or_no=='no':
             self.opponent_score = total_score
+            self.opponent_score_compare = self.opponent_score
             self.dealer_score_label.configure(text=f'Dealer: ?')
         elif who == 'mine':
             self.mine_score = total_score
             self.mine_score_label.configure(text=f'Chunbae: {self.mine_score}')
 
-        return(total_score)
+        return()
 
     def winning_label(self, root, canvas):
         self.winning_label = Label(canvas, text='Chunbae won!', font = ('Helvetica', 30), fg='red', bg='white', borderwidth = 1, relief='solid', padx= 5, pady=5)
