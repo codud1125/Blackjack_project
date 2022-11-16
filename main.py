@@ -10,7 +10,7 @@ root = Tk()
 root.title("Blackjack game")
 root.config(padx=50, pady=50, bg = BACKGROUND_COLOR)
 
-canvas = Canvas(width = 1020, height = 450)
+canvas = Canvas(width = 1020, height = 480)
 canvas.config(bg = BACKGROUND_COLOR, highlightthickness=0)
 canvas.pack()
 

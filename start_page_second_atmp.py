@@ -38,22 +38,22 @@ class startPage:
         right_image = PhotoImage(file= self.wd + '/images/right.png')
         button_right = Button(canvas,image=right_image, borderwidth = 0, highlightthickness=0, command=lambda: self.withdraw_card(root, canvas))
         button_right.image = right_image
-        button_right.place(x=760,y=180)
+        button_right.place(x=760,y=350)
 
         wrong_image = PhotoImage(file= self.wd + '/images/wrong.png')
         button_wrong = Button(canvas, image=wrong_image, borderwidth = 0, highlightthickness=0, command=lambda: self.stop_card(root, canvas))
         button_wrong.image = wrong_image
-        button_wrong.place(x=860,y=180)
+        button_wrong.place(x=860,y=350)
 
         self.starting_card(root, canvas)
 
     def starting_card(self, root, canvas):
 
         self.dealer_score_label = Label(canvas,text='Dealer: ?', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25))
-        self.dealer_score_label.place(x=720,y=80)
+        self.dealer_score_label.place(x=720,y=0)
 
         self.mine_score_label = Label(canvas,text=f'Chunbae: {self.mine_score}', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25))
-        self.mine_score_label.place(x=720,y=340)
+        self.mine_score_label.place(x=720,y=300)
 
         for i in range(0, 2):
             self.opponent(root, canvas, self.opponent_turn, "no")
