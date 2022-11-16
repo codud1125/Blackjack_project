@@ -10,10 +10,10 @@ root = Tk()
 root.title("Blackjack game")
 root.config(padx=50, pady=50, bg = BACKGROUND_COLOR)
 
-canvas = Canvas(width = 1020, height = 480)
+canvas = Canvas(width = 1020, height = 600)
 canvas.config(bg = BACKGROUND_COLOR, highlightthickness=0)
 canvas.pack()
 
-startPage = startPage(root, canvas)
+startPage = startPage(root, canvas, 1000, 100)
 
 root.mainloop()
