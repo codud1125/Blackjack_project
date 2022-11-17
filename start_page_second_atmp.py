@@ -28,7 +28,12 @@ class startPage:
             child.destroy()
 
         self.chunbae_money = chunbae_money
-        self.money_bet = money_bet
+        self.money_bet = 100
+
+        if self.chunbae_money < 0:
+            self.gameover_label = Label(canvas, text='You are broke!', font = ('Helvetica', 40, "bold"), fg='red', bg=self.BACKGROUND_COLOR, borderwidth = 0, relief='solid', padx= 5, pady=5)
+            self.gameover_label.place(x=340, y=230)
+            return
 
         self.data = pandas.read_csv(self.wd + '/cards.csv')
         self.data = self.data.to_dict(orient="records")
@@ -37,6 +42,42 @@ class startPage:
         self.back_image = self.back_image.resize((120, 200), Image.ANTIALIAS)
         self.back_image = ImageTk.PhotoImage(self.back_image)
 
+        # wrong_right Buttons
+
+        self.state = "normal" if (self.money_bet > 0) or (self.money_bet <= self.chunbae_money) else "disabled"
+
+        self.increase_image = Image.open(self.wd + '/images/increase.png')
+        self.increase_image = self.increase_image.resize((75, 75), Image.ANTIALIAS)
+        self.increase_image = ImageTk.PhotoImage(self.increase_image)
+        self.button_increase = Button(canvas,image=self.increase_image, state=self.state, borderwidth = 0, highlightthickness=0, command=lambda: self.increase_bet(root, canvas))
+        self.button_increase.place(x=600,y=0)
+
+        self.decrease_image = Image.open(self.wd + '/images/decrease.png')
+        self.decrease_image = self.decrease_image.resize((75, 75), Image.ANTIALIAS)
+        self.decrease_image = ImageTk.PhotoImage(self.decrease_image)
+        self.button_decrease = Button(canvas,image=self.decrease_image, state=self.state, borderwidth = 0, highlightthickness=0, command=lambda: self.decrease_bet(root, canvas))
+        self.button_decrease.place(x=830,y=0)
+
+        self.chunbae_bet_label = Label(canvas,text=f'Bet: {self.money_bet}', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25))
+        self.chunbae_bet_label.place(x=680,y=15)
+
+        self.bet_image = Image.open(self.wd + '/images/bet.png')
+        self.bet_image = self.bet_image.resize((75, 75), Image.ANTIALIAS)
+        self.bet_image = ImageTk.PhotoImage(self.bet_image)
+        self.button_bet = Button(canvas,image=self.bet_image, state=self.state, borderwidth = 0, highlightthickness=0, command=lambda: self.start(root, canvas))
+        self.button_bet.place(x=930,y=0)
+
+        self.chunbae_money_label = Label(canvas,text=f'Chunbae\'s money: {self.chunbae_money}', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25))
+        self.chunbae_money_label.place(x=650,y=550)
+
+    def start(self, root, canvas):
+        self.button_increase.configure(state = 'disabled')
+        self.button_decrease.configure(state = 'disabled')
+        self.button_bet.configure(state = 'disabled')
+
+        self.starting_card(root, canvas)
+
+    def starting_card(self, root, canvas):
         # wrong_right Buttons
         right_image = PhotoImage(file= self.wd + '/images/right.png')
         self.button_right = Button(canvas,image=right_image, borderwidth = 0, highlightthickness=0, command=lambda: self.withdraw_card(root, canvas))
@@ -47,32 +88,6 @@ class startPage:
         self.button_wrong = Button(canvas, image=wrong_image, borderwidth = 0, highlightthickness=0, command=lambda: self.stop_card(root, canvas))
         self.button_wrong.image = wrong_image
         self.button_wrong.place(x=860,y=350)
-
-        # wrong_right Buttons
-
-        self.state = "normal" if (self.money_bet > 0) or (self.money_bet <= self.chunbae_money) else "disabled"
-
-        self.increase_image = Image.open(self.wd + '/images/increase.png')
-        self.increase_image = self.increase_image.resize((75, 75), Image.ANTIALIAS)
-        self.increase_image = ImageTk.PhotoImage(self.increase_image)
-        self.button_increase = Button(canvas,image=self.increase_image, state=self.state, borderwidth = 0, highlightthickness=0, command=lambda: self.increase_bet(root, canvas))
-        self.button_increase.place(x=700,y=200)
-
-        self.decrease_image = Image.open(self.wd + '/images/decrease.png')
-        self.decrease_image = self.decrease_image.resize((75, 75), Image.ANTIALIAS)
-        self.decrease_image = ImageTk.PhotoImage(self.decrease_image)
-        self.button_decrease = Button(canvas,image=self.decrease_image, state=self.state, borderwidth = 0, highlightthickness=0, command=lambda: self.decrease_bet(root, canvas))
-        self.button_decrease.place(x=930,y=200)
-
-        self.starting_card(root, canvas)
-
-    def starting_card(self, root, canvas):
-        
-        self.chunbae_bet_label = Label(canvas,text=f'Bet: {self.money_bet}', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25))
-        self.chunbae_bet_label.place(x=780,y=215)
-
-        self.chunbae_money_label = Label(canvas,text=f'Chunbae\'s money: {self.chunbae_money}', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25))
-        self.chunbae_money_label.place(x=650,y=550)
 
         self.dealer_score_label = Label(canvas,text='Dealer: ?', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25, "bold"))
         self.dealer_score_label.place(x=350,y=0)
@@ -160,11 +175,14 @@ class startPage:
             self.winning_label(root, canvas)
             return
         elif self.opponent_score == self.mine_score:
-            self.winning_label = Label(canvas, text='Tie!', font = ('Helvetica', 30), fg='red', bg='white', borderwidth = 1, relief='solid', padx= 5, pady=5)
-            self.winning_label.place(x=460, y=190)
+            self.button_right.configure(state='disabled')
+            self.button_wrong.configure(state='disabled')
 
-            self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 15), borderwidth = 1, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, self.money_bet))
-            self.restart_btn.place(x=440, y=250)
+            self.winning_label = Label(canvas, text='Tie!', font = ('Helvetica', 40, "bold"), fg='red', bg=self.BACKGROUND_COLOR, borderwidth = 0, relief='solid', padx= 5, pady=5)
+            self.winning_label.place(x=340, y=230)
+
+            self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), borderwidth = 0, bg=self.BACKGROUND_COLOR, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, self.money_bet))
+            self.restart_btn.place(x=400, y=300)
             return
 
     def mine(self, root, canvas, mine_turn):
@@ -267,21 +285,27 @@ class startPage:
         return()
 
     def winning_label(self, root, canvas):
-        self.winning_label = Label(canvas, text='Chunbae won!', font = ('Helvetica', 30), fg='red', bg='white', borderwidth = 1, relief='solid', padx= 5, pady=5)
-        self.winning_label.place(x=390, y=190)
+        self.button_right.configure(state='disabled')
+        self.button_wrong.configure(state='disabled')
 
-        self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 15), borderwidth = 1, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, self.money_bet))
-        self.restart_btn.place(x=440, y=250)
+        self.winning_label = Label(canvas, text='Chunbae won!', font = ('Helvetica', 40, "bold"), bg = self.BACKGROUND_COLOR, fg='red', borderwidth = 0, relief='solid', padx= 5, pady=5)
+        self.winning_label.place(x=340, y=230)
+
+        self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), bg = self.BACKGROUND_COLOR, borderwidth =0, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, self.money_bet))
+        self.restart_btn.place(x=400, y=300)
 
         self.chunbae_money = self.chunbae_money + self.money_bet
 
 
     def losing_label(self, root, canvas):
-        self.winning_label = Label(canvas, text='Chunbae lost!', font = ('Helvetica', 30), fg='red', bg='white', borderwidth = 1, relief='solid', padx= 5, pady=5)
-        self.winning_label.place(x=390, y=190)
+        self.button_right.configure(state='disabled')
+        self.button_wrong.configure(state='disabled')
 
-        self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 15), borderwidth = 1, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, self.money_bet))
-        self.restart_btn.place(x=440, y=250)
+        self.winning_label = Label(canvas, text='Chunbae lost!', font = ('Helvetica', 40,"bold"), bg = self.BACKGROUND_COLOR, fg='red', borderwidth = 0, relief='solid', padx= 5, pady=5)
+        self.winning_label.place(x=340, y=230)
+
+        self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), bg = self.BACKGROUND_COLOR, borderwidth = 0, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, self.money_bet))
+        self.restart_btn.place(x=400, y=300)
 
         self.chunbae_money = self.chunbae_money - self.money_bet
 
