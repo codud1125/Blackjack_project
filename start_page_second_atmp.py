@@ -27,12 +27,16 @@ class startPage:
         for child in canvas.winfo_children():
             child.destroy()
 
-        self.chunbae_money = chunbae_money
+        self.chunbae_money = chunbae_money - money_bet
         self.money_bet = 100
 
         if self.chunbae_money < 0:
             self.gameover_label = Label(canvas, text='You are broke!', font = ('Helvetica', 40, "bold"), fg='red', bg=self.BACKGROUND_COLOR, borderwidth = 0, relief='solid', padx= 5, pady=5)
             self.gameover_label.place(x=340, y=230)
+
+            self.restart_btn = Button(canvas, text='Want a do over...?', font = ('Helvetica', 10), borderwidth = 0, bg=self.BACKGROUND_COLOR, highlightthickness=0, command = lambda:self.restart(root, canvas, 1000, 100))
+            self.restart_btn.place(x=400, y=300)
+
             return
 
         self.data = pandas.read_csv(self.wd + '/cards.csv')
@@ -288,30 +292,30 @@ class startPage:
         self.button_right.configure(state='disabled')
         self.button_wrong.configure(state='disabled')
 
+        self.chunbae_money = self.chunbae_money + 2*self.money_bet
+
         self.winning_label = Label(canvas, text='Chunbae won!', font = ('Helvetica', 40, "bold"), bg = self.BACKGROUND_COLOR, fg='red', borderwidth = 0, relief='solid', padx= 5, pady=5)
         self.winning_label.place(x=340, y=230)
 
-        self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), bg = self.BACKGROUND_COLOR, borderwidth =0, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, self.money_bet))
+        self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), bg = self.BACKGROUND_COLOR, borderwidth =0, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, 100))
         self.restart_btn.place(x=400, y=300)
-
-        self.chunbae_money = self.chunbae_money + self.money_bet
 
 
     def losing_label(self, root, canvas):
         self.button_right.configure(state='disabled')
         self.button_wrong.configure(state='disabled')
+        
+        self.chunbae_money = self.chunbae_money
 
         self.winning_label = Label(canvas, text='Chunbae lost!', font = ('Helvetica', 40,"bold"), bg = self.BACKGROUND_COLOR, fg='red', borderwidth = 0, relief='solid', padx= 5, pady=5)
         self.winning_label.place(x=340, y=230)
 
-        self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), bg = self.BACKGROUND_COLOR, borderwidth = 0, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, self.money_bet))
+        self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), bg = self.BACKGROUND_COLOR, borderwidth = 0, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, 100))
         self.restart_btn.place(x=400, y=300)
-
-        self.chunbae_money = self.chunbae_money - self.money_bet
 
     def increase_bet(self, root, canvas):
         self.money_bet += 50
-        self.chunbae_money -= 50
+        self.chunbae_money = self.chunbae_money-50
 
         if self.money_bet <= 0:
             self.state = 'disabled'
@@ -332,7 +336,7 @@ class startPage:
 
     def decrease_bet(self, root, canvas):
         self.money_bet -= 50
-        self.chunbae_money += 50
+        self.chunbae_money = self.chunbae_money+50
 
         if self.money_bet <= 0:
             self.state = 'disabled'
