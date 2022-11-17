@@ -3,6 +3,7 @@ import os
 import pandas
 import random
 from PIL import ImageTk, Image
+import time
 
 class startPage:
 
