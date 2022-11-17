@@ -86,12 +86,17 @@ class startPage:
         right_image = PhotoImage(file= self.wd + '/images/right.png')
         self.button_right = Button(canvas,image=right_image, borderwidth = 0, highlightthickness=0, command=lambda: self.withdraw_card(root, canvas))
         self.button_right.image = right_image
-        self.button_right.place(x=760,y=350)
+        self.button_right.place(x=700,y=350)
 
         wrong_image = PhotoImage(file= self.wd + '/images/wrong.png')
         self.button_wrong = Button(canvas, image=wrong_image, borderwidth = 0, highlightthickness=0, command=lambda: self.stop_card(root, canvas))
         self.button_wrong.image = wrong_image
-        self.button_wrong.place(x=860,y=350)
+        self.button_wrong.place(x=800,y=350)
+
+        double_image = PhotoImage(file= self.wd + '/images/double_down.png')
+        self.button_double = Button(canvas, image=double_image, borderwidth = 0, highlightthickness=0, command=lambda: self.double_down(root, canvas))
+        self.button_double.image = double_image
+        self.button_double.place(x=900,y=350)
 
         self.dealer_score_label = Label(canvas,text='Dealer: ?', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25, "bold"))
         self.dealer_score_label.place(x=350,y=0)
@@ -113,6 +118,7 @@ class startPage:
                 return
 
     def withdraw_card(self, root, canvas):
+        self.button_double.configure(state='disabled')
         self.button_increase.configure(state='disabled')
         self.button_decrease.configure(state='disabled')
 
@@ -128,6 +134,7 @@ class startPage:
             self.losing_label(root, canvas)
 
     def stop_card(self, root, canvas):
+        self.button_double.configure(state='disabled')
         self.button_increase.configure(state='disabled')
         self.button_decrease.configure(state='disabled')
 
@@ -287,6 +294,11 @@ class startPage:
             self.mine_score_label.configure(text=f'Chunbae: {self.mine_score}')
 
         return()
+
+    def double_down(self, root, canvas):
+        self.money_bet = self.money_bet * 2
+        self.withdraw_card(root, canvas)
+        self.stop_card(root, canvas)
 
     def winning_label(self, root, canvas):
         self.button_right.configure(state='disabled')
