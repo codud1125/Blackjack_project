@@ -3,6 +3,7 @@ import os
 import pandas
 import random
 from PIL import ImageTk, Image
+import time
 
 class startPage:
 
@@ -86,22 +87,27 @@ class startPage:
         self.button_right = Button(canvas,image=right_image, borderwidth = 0, highlightthickness=0, command=lambda: self.withdraw_card(root, canvas))
         self.button_right.image = right_image
         self.button_right.place(x=700,y=350)
+        time.sleep(0.5)
 
         wrong_image = PhotoImage(file= self.wd + '/images/wrong.png')
         self.button_wrong = Button(canvas, image=wrong_image, borderwidth = 0, highlightthickness=0, command=lambda: self.stop_card(root, canvas))
         self.button_wrong.image = wrong_image
         self.button_wrong.place(x=800,y=350)
+        time.sleep(0.5)
 
         double_image = PhotoImage(file= self.wd + '/images/double_down.png')
         self.button_double = Button(canvas, image=double_image, borderwidth = 0, highlightthickness=0, command=lambda: self.double_down(root, canvas))
         self.button_double.image = double_image
         self.button_double.place(x=900,y=350)
+        time.sleep(0.5)
 
         self.dealer_score_label = Label(canvas,text='Dealer: ?', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25, "bold"))
         self.dealer_score_label.place(x=350,y=0)
+        time.sleep(0.5)
 
         self.mine_score_label = Label(canvas,text=f'Chunbae: {self.mine_score}', bg = self.BACKGROUND_COLOR, font = ('Helvetica', 25, "bold"))
         self.mine_score_label.place(x=350,y=550)
+        time.sleep(0.5)
 
         for i in range(0, 2):
             self.opponent(root, canvas, self.opponent_turn, "no")
