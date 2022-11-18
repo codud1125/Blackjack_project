@@ -169,6 +169,7 @@ class startPage:
 
         while (self.opponent_score_compare < 17):
             self.opponent(root, canvas, self.opponent_turn, "yes")
+
             if isinstance(self.opponent_score, list):
                 if len(self.opponent_score) > 1:
                     self.opponent_score_compare = max(self.opponent_score)
@@ -194,10 +195,12 @@ class startPage:
             self.button_right.configure(state='disabled')
             self.button_wrong.configure(state='disabled')
 
+            self.chunbae_money = self.chunbae_money + self.money_bet
+
             self.winning_label = Label(canvas, text='Tie!', font = ('Helvetica', 40, "bold"), fg='red', bg=self.BACKGROUND_COLOR, borderwidth = 0, relief='solid', padx= 5, pady=5)
             self.winning_label.place(x=340, y=230)
 
-            self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), borderwidth = 0, bg=self.BACKGROUND_COLOR, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, self.money_bet))
+            self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), borderwidth = 0, bg=self.BACKGROUND_COLOR, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, 100))
             self.restart_btn.place(x=400, y=300)
             return
 
