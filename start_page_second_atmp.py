@@ -200,8 +200,8 @@ class startPage:
             self.winning_label = Label(canvas, text='Tie!', font = ('Helvetica', 40, "bold"), fg='red', bg=self.BACKGROUND_COLOR, borderwidth = 0, relief='solid', padx= 5, pady=5)
             self.winning_label.place(x=340, y=230)
 
-            self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), borderwidth = 0, bg=self.BACKGROUND_COLOR, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, 100))
-            self.restart_btn.place(x=400, y=300)
+            self.restart_btn = Button(canvas, text='Shuffle', font = ('Helvetica', 20), borderwidth = 0, bg=self.BACKGROUND_COLOR, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, 100))
+            self.restart_btn.place(x=900, y=100)
             return
 
     def mine(self, root, canvas, mine_turn):
@@ -317,8 +317,8 @@ class startPage:
         self.winning_label = Label(canvas, text='Chunbae won!', font = ('Helvetica', 40, "bold"), bg = self.BACKGROUND_COLOR, fg='red', borderwidth = 0, relief='solid', padx= 5, pady=5)
         self.winning_label.place(x=340, y=230)
 
-        self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), bg = self.BACKGROUND_COLOR, borderwidth =0, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, 100))
-        self.restart_btn.place(x=400, y=300)
+        self.restart_btn = Button(canvas, text='Shuffle', font = ('Helvetica', 20), bg = self.BACKGROUND_COLOR, fg='red', borderwidth =0, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, 100))
+        self.restart_btn.place(x=900, y=100)
 
 
     def losing_label(self, root, canvas):
@@ -330,8 +330,8 @@ class startPage:
         self.winning_label = Label(canvas, text='Chunbae lost!', font = ('Helvetica', 40,"bold"), bg = self.BACKGROUND_COLOR, fg='red', borderwidth = 0, relief='solid', padx= 5, pady=5)
         self.winning_label.place(x=340, y=230)
 
-        self.restart_btn = Button(canvas, text='Restart the game', font = ('Helvetica', 20), bg = self.BACKGROUND_COLOR, borderwidth = 0, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, 100))
-        self.restart_btn.place(x=400, y=300)
+        self.restart_btn = Button(canvas, text='Shuffle', font = ('Helvetica', 20), bg = self.BACKGROUND_COLOR, fg='red', borderwidth = 0, highlightthickness=0, command = lambda:self.restart(root, canvas, self.chunbae_money, 100))
+        self.restart_btn.place(x=900, y=100)
 
     def increase_bet(self, root, canvas):
         self.money_bet += 50
